@@ -5,6 +5,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .database import AsyncSessionLocal
@@ -52,8 +53,14 @@ async def _authenticate(request: Request, session: AsyncSession) -> User:
             currency="KZT",
         )
         session.add(user)
-        await session.commit()
-        await session.refresh(user)
+        try:
+            await session.commit()
+            await session.refresh(user)
+        except IntegrityError:
+            await session.rollback()
+            user = (
+                await session.execute(select(User).where(User.telegram_id == tg_user.id))
+            ).scalars().first()
     return user
 
 
