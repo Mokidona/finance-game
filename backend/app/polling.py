@@ -27,6 +27,8 @@ async def start_polling():
         return
 
     logger.info("Запуск polling бота...")
+    # Удаляем активный вебхук, чтобы polling работал
+    await _bot_api(token, "deleteWebhook", {})
     offset = 0
     domain = os.environ.get("DOMAIN", "2mln.freeddns.org")
 
