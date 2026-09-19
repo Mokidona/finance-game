@@ -28,7 +28,8 @@ async def start_polling():
 
     logger.info("Запуск polling бота...")
     # Удаляем активный вебхук, чтобы polling работал
-    await _bot_api(token, "deleteWebhook", {})
+    delete_result = await _bot_api(token, "deleteWebhook", {})
+    logger.info("deleteWebhook result: %s", delete_result)
     offset = 0
     domain = os.environ.get("DOMAIN", "2mln.freeddns.org")
 
@@ -64,6 +65,6 @@ async def start_polling():
                     logger.info("Отправлено приветствие /start для chat_id=%s", chat_id)
 
         except Exception as e:
-            logger.error("Polling error: %s", e)
+            logger.error("Polling error: %s (%s)", type(e).__name__, e, exc_info=True)
 
         await asyncio.sleep(1)
