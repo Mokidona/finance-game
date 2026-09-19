@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-main: #000000;
+  --accent-mint: #30D158;
+  --accent-red: #FF453A;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #000000;
+  color: #FFFFFF;
+  font-family: Inter, "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Скрываем стрелки у number-инпутов */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Apple-минимализм: скрываем полосы прокрутки */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Секция 11: h-13 из ТЗ (52px) — не входит в дефолтный масштаб Tailwind */
+.h-13 {
+  height: 3.25rem;
+}
+
+/* Секция 14.1: Fracture/Glitch для поверженного аватара */
+@keyframes glitch-shift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+  20% {
+    transform: translate(-3px, 1px);
+    clip-path: inset(10% 0 55% 0);
+  }
+  40% {
+    transform: translate(3px, -1px);
+    clip-path: inset(55% 0 10% 0);
+  }
+  60% {
+    transform: translate(-2px, 0);
+    clip-path: inset(30% 0 30% 0);
+  }
+  80% {
+    transform: translate(2px, 1px);
+    clip-path: inset(70% 0 5% 0);
+  }
+}
+.avatar-glitch-1 {
+  animation: glitch-shift 0.9s steps(2, end) infinite;
+  color: #ff453a;
+  opacity: 0.75;
+}
+.avatar-glitch-2 {
+  animation: glitch-shift 0.7s steps(2, end) infinite reverse;
+  color: #5ac8fa;
+  opacity: 0.5;
+}
+@keyframes avatar-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-1px, 1px);
+  }
+  50% {
+    transform: translate(1px, -1px);
+  }
+  75% {
+    transform: translate(-1px, -1px);
+  }
+}
+.avatar-shake {
+  animation: avatar-shake 2s ease-in-out infinite;
+}
+
+/* Секция 28: кроссфейд состояний спрайта-слизня (анимация кадров — CSS steps(N)) */
+@keyframes slime-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slime-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.slime-fade-in {
+  animation: slime-fade-in 380ms ease-out both;
+}
+.slime-fade-out {
+  animation: slime-fade-out 380ms ease-out both;
+}
+
+/* Секция 15: скины */
+@keyframes architect-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.architect-ring {
+  transform-origin: 60px 60px;
+  animation: architect-ring 14s linear infinite;
+}
+@keyframes phantom-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+.phantom-pulse {
+  animation: phantom-pulse 3s ease-in-out infinite;
+}
+
+@keyframes gold-dust-float {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-140px);
+    opacity: 0;
+  }
+}
+.gold-dust {
+  pointer-events: none;
+}
+.gold-dust span {
+  position: absolute;
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: rgba(255, 215, 0, 0.85);
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.8);
+  animation: gold-dust-float linear infinite;
+}

@@ -1,0 +1,206 @@
+{
+  "common": {
+    "skip": "Skip the tour",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "next": "Next",
+    "loading": "Loading..."
+  },
+  "nav": {
+    "dashboard": "Home",
+    "analytics": "Analytics",
+    "fixed": "Bills",
+    "profile": "Profile"
+  },
+  "header": {
+    "user": "User",
+    "normal": "On track",
+    "over": "Over limit"
+  },
+  "status": {
+    "normal": "Healthy",
+    "warning": "Fragile",
+    "defeated": "Knocked out"
+  },
+  "category": {
+    "food": "Food",
+    "transport": "Transport",
+    "entertainment": "Fun",
+    "other": "Other"
+  },
+  "dashboard": {
+    "available": "Available today",
+    "frozen": "Frozen (owed to me)",
+    "addExpense": "Add expense",
+    "todayExpenses": "Today's expenses",
+    "todayTotal": "Total: {{amount}}",
+    "emptyDay": "A clean day",
+    "coinsHint": "+10 coins for every closed day with HP above 50%",
+    "coinsAria": "Discipline coins: {{coins}}. Open the shop",
+    "faintedTitle": "Your pet is out of strength! Today's limit is exceeded.",
+    "faintedBody": "Quarantine: a 5-second pause on every expense, the day streak is reset. At 00:00 the limit refreshes and the pet revives — or top up the budget with income.",
+    "hideNotice": "Hide the notice",
+    "immutable": "Ledger entries are immutable. This protects your discipline from self-deception.",
+    "immutableTap": "Expenses can't be changed. That's how the Vault protects discipline.",
+    "timeLockBanner": "A purchase is on hold (Time Lock). Tap to confirm or cancel.",
+    "cancelledFlash": "Purchase cancelled during the pause → Saved Capital",
+    "cancelledFlashAmount": "Purchase cancelled → Saved Capital: {{amount}}"
+  },
+  "pet": {
+    "aria": "Pet: {{label}}, HP {{hp}}%. Tap to check its mood",
+    "ariaTapPet": "Meet your pet",
+    "tapNormal": "Everything is under control! The Vault grows stronger.",
+    "tapWarning": "Careful! The limit is almost used up.",
+    "tapDefeated": "I'm knocked out... Waiting for the limit to refresh at 00:00, or top up the budget.",
+    "hp": "HP",
+    "healthAria": "Pet health: {{hp}}% — {{label}}"
+  },
+  "day": {
+    "over": "Limit exceeded — the pet has no HP left, tomorrow is a new chance",
+    "critical": "The pet is fragile: {{hp}}% HP. Hold on!",
+    "closedLate": "Day closed in the green. Saved {{amount}}",
+    "low": "The balance is melting. Focus on what matters.",
+    "morning": "Great start. The whole day is ahead.",
+    "noon": "Great pace. The whole day is ahead.",
+    "evening": "Everything is under control."
+  },
+  "expense": {
+    "title": "New expense",
+    "tabExpense": "Expense",
+    "tabDebt": "Lent out",
+    "necessity": "Essential",
+    "impulse": "Impulse buy",
+    "commentPlaceholder": "Name (e.g. Coffee)",
+    "save": "Save expense",
+    "freeze": "Freeze the amount",
+    "debtorPlaceholder": "To whom (e.g. Yerzhan)",
+    "debtHint": "A loan is not an expense: the amount goes to «Frozen» and cuts today's limit.",
+    "amountRequired": "Enter an amount",
+    "debtorRequired": "Enter whom you lent to",
+    "saveFailed": "Could not save",
+    "pauseHint": "A 5-second pause comes before saving — the mindful timer (§32).",
+    "pauseOffHint": "The mindful timer is off in your profile — the purchase saves right away.",
+    "belowThresholdHint": "The amount is below the risky-purchase threshold — no pause.",
+    "quarantineHint": "Quarantine: the pet is knocked out — a 5-second pause is mandatory for every expense until 00:00."
+  },
+  "guard": {
+    "title": "Damage to your pet!",
+    "titleQuarantine": "Pet quarantine",
+    "body": "This purchase ({{amount}}) will cost your Tamagotchi HP. Spend it anyway?",
+    "bodyQuarantine": "The pet is knocked out: the pause is mandatory for any expense until 00:00. Spend {{amount}}?",
+    "hpLabel": "Pet HP",
+    "overLimit": "Pet HP — the limit is already exceeded",
+    "wait": "Pause ({{seconds}}s)",
+    "confirm": "Yes, spend it",
+    "footnote": "Cancelling returns the amount to Saved Capital and keeps your pet's HP.",
+    "quarantineFootnote": "The quarantine lasts until 00:00: then the limit refreshes and the pet revives."
+  },
+  "profile": {
+    "loading": "Loading profile...",
+    "title": "Profile",
+    "name": "Name",
+    "defaultName": "User",
+    "income": "Monthly income",
+    "limitShort": "limit {{amount}}",
+    "saving": "Saving...",
+    "currency": "Currency",
+    "language": "Language",
+    "premiumActive": "Premium is active",
+    "premiumAll": "All features unlocked",
+    "gamification": "Gamification & features",
+    "pauseTitle": "Pause before a pointless purchase",
+    "pauseSub": "5 seconds to think — turn it off and purchases go through at once",
+    "pauseQuarantine": "Pet quarantine: the pause is mandatory for every expense until 00:00",
+    "thresholdTitle": "Risky purchase threshold",
+    "thresholdSub": "0 — pause for any impulse purchase",
+    "thresholdFoot": "Cancelling during the pause moves the amount to Saved Capital.",
+    "coinsTitle": "Discipline coins",
+    "coinsSub": "+10 coins for every closed day with pet HP above 50%",
+    "vibrateTitle": "Vibrate on pet damage",
+    "vibrateSub": "Haptic feedback on every write-off",
+    "shopTitle": "Customization shop",
+    "shopSub": "Trade coins for Keeper skins",
+    "savedTitle": "Saved by cancelling impulses",
+    "safeTitle": "Is the purchase safe?",
+    "safeSub": "Enter the price of the thing you want — we'll count how much HP the pet loses.",
+    "check": "Check",
+    "checking": "...",
+    "safeFailed": "Could not check the purchase",
+    "premiumCta": "Premium access",
+    "premiumCtaSub": "Analytics, fixed expenses and the purchase detector — one-time payment",
+    "activate": "Activate Premium for {{price}}"
+  },
+  "skins": {
+    "skin_cadet": {
+      "name": "Cadet",
+      "description": "The basic cyber suit, open-face helmet. Steel aesthetics."
+    },
+    "skin_titan_guardian": {
+      "name": "Titan Guardian",
+      "description": "Heavy armour with neon veins. A shield animation on every spend."
+    },
+    "skin_ronin": {
+      "name": "Ronin of Discipline",
+      "description": "Cyber-samurai helmet, mask and two katanas on the back."
+    },
+    "skin_architect": {
+      "name": "Wealth Architect",
+      "description": "Golden suit with a geometric wave aura."
+    },
+    "skin_phantom_gold": {
+      "name": "Cyber Phantom",
+      "description": "Dark glass, golden inner nodes and golden goal dust."
+    }
+  },
+  "shop": {
+    "title": "Coin shop",
+    "subtitle": "Skins are bought with discipline coins or unlocked by a streak.",
+    "balance": "Balance",
+    "earned": "Earned",
+    "spent": "Spent",
+    "coins": "{{count}} coins",
+    "buy": "Buy for {{price}}",
+    "equip": "Equip",
+    "equipped": "Equipped",
+    "owned": "In collection",
+    "premiumOnly": "Premium only",
+    "free": "Available from the start",
+    "byStreak": "Streak {{days}} d.",
+    "byStreakOrCoins": "Streak {{days}} d. or {{price}} coins",
+    "missing": "{{missing}} coins short",
+    "bought": "Skin bought and equipped",
+    "equipped_toast": "Skin equipped",
+    "failed": "Could not buy the skin",
+    "empty": "Empty so far",
+    "close": "Close the shop"
+  },
+  "onboarding": {
+    "stepOf": "Step {{step}} of {{total}}",
+    "title": "Vault Keeper",
+    "subtitle": "Hi! I am your financial Tamagotchi. My health (HP) directly depends on how well you stick to your daily budget. Don't let me get knocked out.",
+    "meet": "Meet me",
+    "currencyTitle": "Select currency",
+    "currencySub": "Your limit, expenses and coins will be counted in it.",
+    "limitTitle": "Set daily limit",
+    "limitSub": "Set a comfortable daily spending amount — I'll calculate my health from it.",
+    "limitSave": "Save limit",
+    "limitSaving": "Saving...",
+    "limitInvalid": "Enter an amount above zero",
+    "limitFailed": "Could not save the limit",
+    "testTitle": "Let's see how I react to spending",
+    "testBody": "Tap «Add expense» and enter a test purchase of {{amount}} (e.g. Coffee).",
+    "damageTitle": "See? Every purchase takes a part of my HP.",
+    "damageFrom": "−{{amount}} out of {{limit}}",
+    "damageFoot": "Your HP is {{hp}}% now. Spend more than the daily limit — I get knocked out and the day streak resets.",
+    "ruleTitle": "The Vault rule",
+    "ruleBody": "Expenses cannot be deleted or edited — entries are written in ink. Typed the wrong amount? Adjust your income in the profile.",
+    "pauseStep": "Step 4 of 4 · Impulse protection",
+    "pauseBody": "When you want an impulse purchase, a 5-second pause kicks in. Cool down and think whether it's worth my health.",
+    "pauseRow": "Pause before spending",
+    "pauseValue": "5 sec",
+    "pauseFoot": "Cancel during the pause and the amount goes to «Saved Capital» while your pet's HP stays intact. You can turn the pause off in the profile.",
+    "start": "Got it, I'm ready!",
+    "aria": "Onboarding"
+  }
+}
