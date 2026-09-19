@@ -202,5 +202,12 @@
     "pauseFoot": "Cancel during the pause and the amount goes to «Saved Capital» while your pet's HP stays intact. You can turn the pause off in the profile.",
     "start": "Got it, I'm ready!",
     "aria": "Onboarding"
+  },
+  "welcome": {
+    "aria": "Welcome message",
+    "title": "Welcome, Keeper!",
+    "body": "Your financial Tamagotchi is ready. Open the app every day, track your budget, and don't let your pet get knocked out.",
+    "openApp": "Open app",
+    "skip": "Skip"
   }
 }

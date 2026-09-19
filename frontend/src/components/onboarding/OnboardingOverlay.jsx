@@ -92,6 +92,7 @@ export default function OnboardingOverlay({ onRequireDashboard, onFinished }) {
   const [baseline, setBaseline] = useState(null);
   const [testAmount, setTestAmount] = useState(null);
   const [phase, setPhase] = useState("prompt"); // prompt | result (шаг 3)
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
 
   const open = !state.hasCompletedOnboarding && Boolean(dashboard) && Boolean(profile);
   const currency = profile?.currency || "KZT";
@@ -142,6 +143,7 @@ export default function OnboardingOverlay({ onRequireDashboard, onFinished }) {
     (why) => {
       triggerHaptic("success");
       actions.complete({ via: why });
+      setWelcomeOpen(true);
       onFinished?.();
     },
     [actions, onFinished, triggerHaptic]
@@ -494,7 +496,7 @@ export default function OnboardingOverlay({ onRequireDashboard, onFinished }) {
                   <button
                     type="button"
                     onClick={() => finish("completed")}
-                    className="w-full h-12 rounded-2xl bg-[#34C759] text-black text-sm font-bold flex items-center justify-center active:scale-[0.97] transition-transform"
+                    className="w-full h-12 rounded-2xl bg-[#34C759] text-black text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
                   >
                     {t("onboarding.start")}
                   </button>
@@ -504,6 +506,49 @@ export default function OnboardingOverlay({ onRequireDashboard, onFinished }) {
           </AnimatePresence>
         </div>
       ) : null}
+
+      {/* Приветственное сообщение после «Старт» с ссылкой на Mini App */}
+      <AnimatePresence>
+        {welcomeOpen ? (
+          <motion.div
+            key="welcome"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={SPRING}
+            className="fixed inset-0 z-[70] flex items-center justify-center px-5"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("welcome.aria")}
+          >
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
+            <motion.div
+              className={`${PANEL} relative pointer-events-auto max-w-[340px] text-center`}
+            >
+              <div className="w-14 h-14 rounded-3xl bg-[#34C759]/15 flex items-center justify-center mx-auto mb-4">
+                <Target size={28} strokeWidth={1.5} className="text-[#34C759]" />
+              </div>
+              <h2 className="text-xl font-extrabold text-white mb-2">{t("welcome.title")}</h2>
+              <p className="text-sm text-neutral-300 leading-relaxed mb-4">{t("welcome.body")}</p>
+              <a
+                href={window.Telegram?.WebApp?.initData ? "https://t.me/budget_mini_app" : window.location.href}
+                className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-[#34C759] text-black text-sm font-bold active:scale-[0.97] transition-transform"
+                onClick={() => setWelcomeOpen(false)}
+              >
+                {t("welcome.openApp")}
+                <ArrowRight size={16} strokeWidth={2} />
+              </a>
+              <button
+                type="button"
+                onClick={() => setWelcomeOpen(false)}
+                className="mt-3 text-[11px] text-neutral-500 underline underline-offset-2"
+              >
+                {t("common.skip")}
+              </button>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
