@@ -125,6 +125,28 @@ async def paywall_webhook(
         return {"ok": True}
 
     message = update.get("message") or {}
+    text = message.get("text", "")
+
+    # Обработка команды /start в боте
+    if text and text.startswith("/start"):
+        token = get_bot_token()
+        chat_id = message.get("chat", {}).get("id")
+        if token and chat_id is not None:
+            await _bot_api(
+                token,
+                "sendMessage",
+                {
+                    "chat_id": chat_id,
+                    "text": "👋 Привет, Хранитель Казны!\n\nОткрывай приложение и следи за бюджетом вместе с питомцем. Не дай ему уйти в нокаут!",
+                    "reply_markup": {
+                        "inline_keyboard": [
+                            [{"text": "🚀 Открыть приложение", "url": f"https://{os.environ.get('DOMAIN', '2mln.freeddns.org')}"}]
+                        ]
+                    },
+                },
+            )
+        return {"ok": True}
+
     payment = message.get("successful_payment")
     if payment and payment.get("currency") == "XTR":
         from_user = message.get("from") or {}
