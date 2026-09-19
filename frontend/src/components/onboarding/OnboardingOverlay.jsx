@@ -530,14 +530,14 @@ export default function OnboardingOverlay({ onRequireDashboard, onFinished }) {
               </div>
               <h2 className="text-xl font-extrabold text-white mb-2">{t("welcome.title")}</h2>
               <p className="text-sm text-neutral-300 leading-relaxed mb-4">{t("welcome.body")}</p>
-              <a
-                href={window.Telegram?.WebApp?.initData ? "https://t.me/budget_mini_app" : window.location.href}
-                className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-[#34C759] text-black text-sm font-bold active:scale-[0.97] transition-transform"
+              <button
+                type="button"
                 onClick={() => setWelcomeOpen(false)}
+                className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-[#34C759] text-black text-sm font-bold active:scale-[0.97] transition-transform"
               >
                 {t("welcome.openApp")}
                 <ArrowRight size={16} strokeWidth={2} />
-              </a>
+              </button>
               <button
                 type="button"
                 onClick={() => setWelcomeOpen(false)}

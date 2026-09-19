@@ -56,7 +56,7 @@ async def start_polling():
                             "text": "👋 Привет, Хранитель Казны!\n\nОткрывай приложение и следи за бюджетом вместе с питомцем. Не дай ему уйти в нокаут!",
                             "reply_markup": {
                                 "inline_keyboard": [
-                                    [{"text": "🚀 Открыть приложение", "url": f"https://{domain}"}]
+                                    [{"text": "🚀 Открыть приложение", "web_app": {"url": f"https://{domain}"}}]
                                 ]
                             },
                         },
