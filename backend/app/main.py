@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import init_db
+from .polling import start_polling
 from .routers import (
     analytics,
     avatar,
@@ -17,15 +18,14 @@ from .routers import (
     shop,
     transactions,
 )
-from .routers.paywall import maybe_setup_webhook
+
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     await init_db()
-    # Разово при старте: регистрируем webhook бота (Telegram Stars), если заданы
-    # BOT_TOKEN + WEBHOOK_SECRET + PUBLIC_DOMAIN. Иначе просто пропускается.
-    await maybe_setup_webhook()
+    # Запускаем polling бота вместо webhook
+    await start_polling()
     yield
 
 
