@@ -5,7 +5,8 @@ from decimal import Decimal
 
 from fastapi import APIRouter, HTTPException
 
-from ..deps import CurrentUser, Session
+from ..deps import CurrentUser
+from ..database import AsyncSessionLocal
 from ..schemas import (
     AnalyticsResponse,
     SafePurchaseRequest,
@@ -17,15 +18,16 @@ router = APIRouter(tags=["analytics"])
 
 
 @router.get("/analytics", response_model=AnalyticsResponse)
-async def get_analytics(session: Session, user: CurrentUser) -> AnalyticsResponse:
-    today = date.today()
-    data = await budget.build_analytics(session, user, today)
-    return AnalyticsResponse(**data)
+async def get_analytics(user: CurrentUser) -> AnalyticsResponse:
+    async with AsyncSessionLocal() as session:
+        today = date.today()
+        data = await budget.build_analytics(session, user, today)
+        return AnalyticsResponse(**data)
 
 
 @router.post("/analytics/safe-purchase", response_model=SafePurchaseResponse)
 async def safe_purchase(
-    payload: SafePurchaseRequest, session: Session, user: CurrentUser
+    payload: SafePurchaseRequest, user: CurrentUser
 ) -> SafePurchaseResponse:
     """Премиум: детектор безопасной покупки.
 
@@ -35,12 +37,13 @@ async def safe_purchase(
     if not user.has_paid_access:
         raise HTTPException(status_code=403, detail="Функция доступна в премиум-версии")
 
-    today = date.today()
-    base_limit = budget.money(user.daily_limit)
-    month_spent = await budget.get_month_spent(session, user.id, today)
-    free_money = budget.money(user.monthly_income) - budget.money(user.fixed_expenses_total)
-    remaining = budget.money(free_money - month_spent)
-    amount = budget.money(payload.amount)
+    async with AsyncSessionLocal() as session:
+        today = date.today()
+        base_limit = budget.money(user.daily_limit)
+        month_spent = await budget.get_month_spent(session, user.id, today)
+        free_money = budget.money(user.monthly_income) - budget.money(user.fixed_expenses_total)
+        remaining = budget.money(free_money - month_spent)
+        amount = budget.money(payload.amount)
 
     def to_hp(rest: Decimal) -> int:
         """HP питомца по §31/32.1: доля неистраченного дневного лимита, 0..100."""
@@ -61,40 +64,40 @@ async def safe_purchase(
             message="Сначала укажи месячный доход в профиле — без лимита расчет невозможен.",
         )
 
-    # HP считаем от дневного остатка: сегодня доступно + эффект покупки
-    today = date.today()
-    spent_today = await budget.get_spent_on_date(session, user.id, today)
-    available_now = budget.money(
-        base_limit + await budget.compute_carry_over(session, user, today) - spent_today
-    )
-    hp_now = to_hp(available_now)
-    remaining_after = budget.money(remaining - amount)
-    available_after = budget.money(available_now - amount)
-    hp_after = to_hp(available_after)
-    affordable = remaining_after > 0 and available_after > 0
-    hp_loss = max(0, hp_now - hp_after)
-
-    if available_after <= 0:
-        message = (
-            f"Покупка обнулит HP питомца ({hp_now}% → 0%) и уведет день в минус. "
-            "Лучше отложить."
+        # HP считаем от дневного остатка: сегодня доступно + эффект покупки
+        today = date.today()
+        spent_today = await budget.get_spent_on_date(session, user.id, today)
+        available_now = budget.money(
+            base_limit + await budget.compute_carry_over(session, user, today) - spent_today
         )
-    elif not affordable:
-        message = "Эта покупка съест весь остаток месяца. Лучше отложить."
-    elif hp_loss <= 0:
-        message = f"Покупка безопасна: HP питомца останется на {hp_now}%."
-    else:
-        message = (
-            f"HP питомца: {hp_now}% → {hp_after}% (−{hp_loss}). "
-            f"Остаток после: {budget.money(remaining_after)} {user.currency}."
-        )
+        hp_now = to_hp(available_now)
+        remaining_after = budget.money(remaining - amount)
+        available_after = budget.money(available_now - amount)
+        hp_after = to_hp(available_after)
+        affordable = remaining_after > 0 and available_after > 0
+        hp_loss = max(0, hp_now - hp_after)
 
-    return SafePurchaseResponse(
-        currency=user.currency,
-        affordable=affordable,
-        hp_now=hp_now,
-        hp_after=hp_after,
-        hp_loss=hp_loss,
-        remaining_after_purchase=float(remaining_after),
-        message=message,
-    )
+        if available_after <= 0:
+            message = (
+                f"Покупка обнулит HP питомца ({hp_now}% → 0%) и уведет день в минус. "
+                "Лучше отложить."
+            )
+        elif not affordable:
+            message = "Эта покупка съест весь остаток месяца. Лучше отложить."
+        elif hp_loss <= 0:
+            message = f"Покупка безопасна: HP питомца останется на {hp_now}%."
+        else:
+            message = (
+                f"HP питомца: {hp_now}% → {hp_after}% (−{hp_loss}). "
+                f"Остаток после: {budget.money(remaining_after)} {user.currency}."
+            )
+
+        return SafePurchaseResponse(
+            currency=user.currency,
+            affordable=affordable,
+            hp_now=hp_now,
+            hp_after=hp_after,
+            hp_loss=hp_loss,
+            remaining_after_purchase=float(remaining_after),
+            message=message,
+        )

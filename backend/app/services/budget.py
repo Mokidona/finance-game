@@ -349,26 +349,7 @@ async def build_dashboard(session: AsyncSession, user: User, today: date) -> dic
 
     insights = await build_insights(session, user, today, spent_today, current_limit)
     streak_days = await compute_streak(session, user, today)
-    total_saved = await compute_total_saved(session, user, today)
-    # §35.3: в дашборде показываем ДОСТУПНЫЕ монеты (заработано − куплено в магазине)
-    from . import shop as shop_service
-
-    coins = await shop_service.coins_available(
-        session, user.id, await compute_coins(session, user, today)
-    )
-    frozen_total = await get_frozen_total(session, user.id)
-
-    # 15.3.2: активные Time Lock-покупки (для баннера на дашборде, если остались
-    # легаси-записи). Новые импульсы (32.2) проходят 5-секундную паузу на клиенте.
-    from ..models import PendingTransaction
-
-    pending_count = (
-        await session.execute(
-            select(func.count())
-            .select_from(PendingTransaction)
-            .where(PendingTransaction.user_id == user.id)
-        )
-    ).scalar_one()
+    coins = await compute_coins(session, user, today)
 
     return {
         "user_id": user.id,
@@ -382,10 +363,7 @@ async def build_dashboard(session: AsyncSession, user: User, today: date) -> dic
         "has_paid_access": bool(user.has_paid_access),
         "streak_days": streak_days,
         "coins": int(coins),
-        "total_saved_kzt": float(total_saved),
-        "frozen_total": float(frozen_total),
         "active_skin_id": user.active_skin_id,
-        "pending_transactions_count": int(pending_count or 0),
         "insights": insights,
         "today_transactions": [
             {
