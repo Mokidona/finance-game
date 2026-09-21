@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { useHaptics } from "../../hooks/useHaptics.js";
-import StatusBadge from "../dashboard/StatusBadge.jsx";
 
 export default function Header({ userName, status, onAvatarClick }) {
   const { triggerHaptic } = useHaptics();
@@ -17,7 +16,6 @@ export default function Header({ userName, status, onAvatarClick }) {
       >
         <span className="font-medium text-sm text-white">{userName || t("header.user")}</span>
       </button>
-      {status ? <StatusBadge status={status} /> : null}
     </header>
   );
 }
