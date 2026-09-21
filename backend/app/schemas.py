@@ -107,6 +107,20 @@ class AnalyticsResponse(BaseModel):
     category_breakdown: list[AnalyticsCategoryRow]
 
 
+class SafePurchaseRequest(BaseModel):
+    amount: float = Field(gt=0)
+
+
+class SafePurchaseResponse(BaseModel):
+    currency: str
+    affordable: bool
+    hp_now: int
+    hp_after: int
+    hp_loss: int
+    remaining_after_purchase: float
+    message: str
+
+
 # ---------- Profile ----------
 class ProfileOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
