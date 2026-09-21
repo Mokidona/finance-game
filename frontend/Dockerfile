@@ -4,8 +4,8 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 # package-lock.json обязателен: npm ci ставит ровно те версии, что в локе
-COPY package.json package-lock.json ./
-RUN npm install --no-audit --no-fund
+COPY package.json ./
+RUN npm install --prefer-offline --no-audit --no-fund
 
 COPY . .
 
