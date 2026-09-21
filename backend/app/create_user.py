@@ -36,10 +36,12 @@ def _parse_income(raw: str) -> Decimal:
 
 
 async def create_user(name: str, income: Decimal, premium: bool) -> None:
-    await init_db()
-
-    from .database import AsyncSessionLocal
+    # Импорт внутри функции: database.py читает DB_PATH при импорте, поэтому
+    # env нужно установить до него (иначе флаг --db молча игнорируется).
+    from .database import AsyncSessionLocal, init_db
     from sqlalchemy import select
+
+    await init_db()
 
     async with AsyncSessionLocal() as session:
         existing = (await session.execute(select(User).order_by(User.id))).scalars().first()

@@ -7,7 +7,7 @@ from decimal import ROUND_FLOOR, ROUND_HALF_UP, Decimal
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import FixedExpense, Transaction, User
+from ..models import DayBalance, Debt, FixedExpense, Transaction, User
 
 
 TWO_PLACES = Decimal("0.01")
@@ -241,6 +241,23 @@ async def get_month_spent(session: AsyncSession, user_id: int, today: date) -> D
             )
         ).scalar_one()
     )
+
+
+async def get_frozen_total(session: AsyncSession, user_id: int) -> Decimal:
+    """«Замороженные деньги» (секция 12.3): сумма ещё не возвращённых долгов.
+
+    Долг — не расход, но временно блокирует деньги и уменьшает доступный
+    остаток; инсайт на дашборде показывает, сколько висит в долгах.
+    """
+    total = (
+        await session.execute(
+            select(func.coalesce(func.sum(Debt.amount), 0)).where(
+                Debt.user_id == user_id,
+                Debt.is_returned.is_(False),
+            )
+        )
+    ).scalar_one()
+    return money(total)
 
 
 async def build_insights(
