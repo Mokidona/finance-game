@@ -29,11 +29,6 @@ async def get_analytics(user: CurrentUser) -> AnalyticsResponse:
 async def safe_purchase(
     payload: SafePurchaseRequest, user: CurrentUser
 ) -> SafePurchaseResponse:
-    """Премиум: детектор безопасной покупки.
-
-    32.1: считаем в терминах HP питомца (единственная метрика состояния), а не
-    «запаса прочности»: покупка снижает остаток лимита → HP может просесть.
-    """
     if not user.has_paid_access:
         raise HTTPException(status_code=403, detail="Функция доступна в премиум-версии")
 
@@ -46,7 +41,6 @@ async def safe_purchase(
         amount = budget.money(payload.amount)
 
     def to_hp(rest: Decimal) -> int:
-        """HP питомца по §31/32.1: доля неистраченного дневного лимита, 0..100."""
         if base_limit <= 0:
             return 100 if rest > 0 else 0
         if rest <= 0:
@@ -64,7 +58,7 @@ async def safe_purchase(
             message="Сначала укажи месячный доход в профиле — без лимита расчет невозможен.",
         )
 
-        # HP считаем от дневного остатка: сегодня доступно + эффект покупки
+    async with AsyncSessionLocal() as session:
         today = date.today()
         spent_today = await budget.get_spent_on_date(session, user.id, today)
         available_now = budget.money(
