@@ -3,8 +3,10 @@ FROM node:22-alpine AS build
 
 WORKDIR /app
 
+ENV NODE_OPTIONS=--max-old-space-size=1024
+
 COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+RUN npm install --no-audit --no-fund --fetch-timeout=300000
 
 COPY . .
 
