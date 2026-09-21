@@ -7,7 +7,8 @@ from decimal import ROUND_FLOOR, ROUND_HALF_UP, Decimal
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import DayBalance, Debt, FixedExpense, Transaction, User
+from ..models import FixedExpense, Transaction, User
+
 
 TWO_PLACES = Decimal("0.01")
 
@@ -43,35 +44,18 @@ async def sync_fixed_expenses_total(session: AsyncSession, user: User) -> Decima
     return user.fixed_expenses_total
 
 
-def compute_daily_limit(user: User, today: date | None = None, frozen: Decimal | None = None) -> Decimal:
-    """Free_Money = income - fixed_expenses - frozen (замороженные долги);
-    daily_limit = Free_Money / дней в месяце (округление вниз)."""
+def compute_daily_limit(user: User, today: date | None = None) -> Decimal:
+    """Free_Money = income - fixed_expenses; daily_limit = Free_Money / дней в месяце."""
     today = today or date.today()
-    free_money = (
-        money(user.monthly_income) - money(user.fixed_expenses_total) - money(frozen or 0)
-    )
+    free_money = money(user.monthly_income) - money(user.fixed_expenses_total)
     if free_money <= 0:
         return Decimal("0.00")
     return (free_money / days_in_month(today)).quantize(TWO_PLACES, rounding=ROUND_FLOOR)
 
 
-async def get_frozen_total(session: AsyncSession, user_id: int) -> Decimal:
-    """Сумма активных (невозвращенных) долгов — «замороженные деньги»."""
-    total = (
-        await session.execute(
-            select(func.coalesce(func.sum(Debt.amount), 0)).where(
-                Debt.user_id == user_id,
-                Debt.is_returned.is_(False),
-            )
-        )
-    ).scalar_one()
-    return money(total)
-
-
 async def recompute_daily_limit(session: AsyncSession, user: User) -> Decimal:
-    """Пересчитывает лимит с учетом фиксированных расходов И замороженных долгов."""
-    frozen = await get_frozen_total(session, user.id)
-    user.daily_limit = compute_daily_limit(user, frozen=frozen)
+    """Пересчитывает лимит с учетом фиксированных расходов."""
+    user.daily_limit = compute_daily_limit(user)
     return user.daily_limit
 
 

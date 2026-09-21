@@ -5,7 +5,7 @@ WORKDIR /app
 
 # package-lock.json обязателен: npm ci ставит ровно те версии, что в локе
 COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+RUN npm install --no-audit --no-fund
 
 COPY . .
 

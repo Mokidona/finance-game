@@ -1,30 +1,18 @@
 import { useCallback } from "react";
 
-const VIBRATION_PATTERNS = {
-  light: 10,
-  medium: 20,
-  heavy: 30,
-  success: [10, 30, 20],
-  warning: [30, 50, 30],
-  error: [50, 100, 50],
-};
-
 export function useHaptics() {
   const triggerHaptic = useCallback((type) => {
-    const tg = typeof window !== "undefined" ? window.Telegram?.WebApp : null;
-
-    if (tg?.HapticFeedback) {
-      if (["light", "medium", "heavy"].includes(type)) {
-        tg.HapticFeedback.impactOccurred(type);
-      } else {
-        tg.HapticFeedback.notificationOccurred(type);
-      }
-      return;
-    }
-
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      // Запасной фоллбек для обычного мобильного браузера
-      navigator.vibrate(VIBRATION_PATTERNS[type] || 15);
+    // Простая заглушка для вибрации (если поддерживается устройством)
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      const patterns = {
+        light: [10],
+        medium: [20],
+        heavy: [30],
+        success: [15, 10, 15],
+        warning: [20, 10, 20],
+        error: [30, 10, 30],
+      };
+      navigator.vibrate(patterns[type] || 10);
     }
   }, []);
 
