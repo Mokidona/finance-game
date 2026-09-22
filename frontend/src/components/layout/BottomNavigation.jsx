@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useHaptics } from "../../hooks/useHaptics.js";
-import { BarChart3, CalendarDays, LayoutDashboard, Lock, User } from "lucide-react";
+import { BarChart3, CalendarDays, LayoutDashboard, User } from "lucide-react";
 
 // Подписи берём из словаря по ключу `nav.*` (§35.2)
 const TABS = [
@@ -13,7 +13,7 @@ const TABS = [
 
 const SPRING = { type: "spring", stiffness: 400, damping: 28 };
 
-export default function BottomNavigation({ active, onChange, hasPaidAccess }) {
+export default function BottomNavigation({ active, onChange }) {
   const { triggerHaptic } = useHaptics();
   const { t } = useTranslation();
 
@@ -24,7 +24,6 @@ export default function BottomNavigation({ active, onChange, hasPaidAccess }) {
     >
       {TABS.map(({ key, Icon }) => {
         const label = t(`nav.${key}`);
-        const locked = key === "analytics" && !hasPaidAccess;
         const isActive = active === key;
         return (
           <motion.button
@@ -42,9 +41,6 @@ export default function BottomNavigation({ active, onChange, hasPaidAccess }) {
           >
             <div className="relative">
               <Icon size={20} strokeWidth={isActive ? 1.5 : 1.25} />
-              {locked ? (
-                <Lock size={9} strokeWidth={1.5} className="absolute -top-0.5 -right-1.5" />
-              ) : null}
             </div>
             <span className={`text-[10px] mt-1 ${isActive ? "font-medium" : "font-normal"}`}>
               {label}

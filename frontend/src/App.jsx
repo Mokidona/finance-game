@@ -87,7 +87,7 @@ function AppShell() {
       <main className="px-5 py-4 pb-28">
         <Page onNavigate={setTab} />
       </main>
-      <BottomNavigation active={tab} onChange={setTab} hasPaidAccess={Boolean(dashboard?.has_paid_access)} />
+      <BottomNavigation active={tab} onChange={setTab} />
     </MobileContainer>
   );
 }
