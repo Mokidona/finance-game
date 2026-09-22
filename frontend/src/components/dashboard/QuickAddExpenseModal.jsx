@@ -40,8 +40,6 @@ export default function QuickAddExpenseModal({ open, onClose, onSaved, currency 
         amount: value,
         category,
         comment: null,
-        kind: "necessity",
-        impulse_acknowledged: true,
       });
       onSaved?.();
       onClose();

@@ -31,9 +31,6 @@ class DashboardResponse(BaseModel):
     spent_today: float
     progress_percentage: float
     has_paid_access: bool
-    streak_days: int = 0
-    coins: int = 0
-    active_skin_id: str = "skin_cadet"
     insights: list[DashboardInsight]
     today_transactions: list[TodayTransaction]
 
@@ -133,7 +130,6 @@ class ProfileOut(BaseModel):
     fixed_expenses_total: float
     daily_limit: float
     has_paid_access: bool
-    active_skin_id: str = "skin_cadet"
     danger_threshold: float | None = None
     saved_capital: float = 0.0
 
@@ -145,43 +141,12 @@ class ProfileUpdate(BaseModel):
     danger_threshold: float | None = Field(default=None, ge=0)
 
 
-# ---------- Avatar & Skins ----------
-class AvatarStatus(BaseModel):
-    emotion: Literal["NORMAL", "WARNING", "DEFEATED"]
-    glow_color: str
-    glitch_effect: bool
+class AuthRegisterRequest(BaseModel):
+    email: str = Field(min_length=1, max_length=200)
+    first_name: str | None = Field(default=None, max_length=100)
+    monthly_income: float | None = Field(default=None, ge=0)
 
 
-class AvatarStatusResponse(BaseModel):
-    user_id: int
-    active_skin_id: str
-    streak_days: int
-    is_premium: bool
-    avatar_status: AvatarStatus
-    unlocked_skins: list[str]
-    saved_capital: float
+class AuthLoginRequest(BaseModel):
+    email: str
 
-
-class SkinOut(BaseModel):
-    id: str
-    name: str
-    description: str
-    streak_required: int
-    premium_only: bool
-    unlocked: bool
-    lock_reason: str | None = None
-
-
-class SkinsResponse(BaseModel):
-    active_skin_id: str
-    unlocked: list[str]
-    skins: list[SkinOut]
-
-
-class EquipSkinRequest(BaseModel):
-    skin_id: str
-
-
-class EquipSkinResponse(BaseModel):
-    success: bool
-    active_skin_id: str

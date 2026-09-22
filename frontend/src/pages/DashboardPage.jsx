@@ -3,11 +3,6 @@ import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
 import { useApi } from "../context/AppContext.jsx";
 import { formatCurrency } from "../utils/format.js";
-import ProgressRing from "../components/dashboard/ProgressRing.jsx";
-import TamagotchiPet from "../components/dashboard/TamagotchiPet.jsx";
-import PetHealthBar from "../components/dashboard/PetHealthBar.jsx";
-import { computePetHealth } from "../utils/petHealth.js";
-import { slimeIdForSkin } from "../utils/skins.js";
 import QuickAddExpenseModal from "../components/dashboard/QuickAddExpenseModal.jsx";
 import TransactionItem from "../components/expenses/TransactionItem.jsx";
 
@@ -24,42 +19,35 @@ export default function DashboardPage() {
   const currency = dashboard.currency || "KZT";
   const limit = Number(dashboard.daily_limit_current || 0);
   const spent = Number(dashboard.spent_today || 0);
-  const pct = Math.max(0, Math.min(Number(dashboard.progress_percentage || 0), 100));
-  const dailyLimitBase = Number(dashboard.daily_limit_base || 0);
-  const health = computePetHealth({ availableBudget: limit, dailyLimit: dailyLimitBase });
+  const baseLimit = Number(dashboard.daily_limit_base || 0);
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Питомец в кольце */}
-      <div className="flex justify-center pt-2">
-        <ProgressRing percentage={pct} over={health.hpPercent <= 0}>
-          <TamagotchiPet
-            availableBudget={limit}
-            dailyLimit={dailyLimitBase}
-            size={110}
-            slimeId={slimeIdForSkin(dashboard.active_skin_id)}
-          />
-        </ProgressRing>
-      </div>
-
-      {/* HP + сумма */}
-      <div className="flex flex-col items-center mt-2">
-        <div className="flex items-center gap-2">
-          <PetHealthBar health={health} />
-        </div>
-        <p className="mt-2 text-[10px] font-semibold text-neutral-400 tracking-wider uppercase">
+    <div className="min-h-full">
+      {/* Простая карточка с цифрами */}
+      <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-5 mb-5">
+        <p className="text-[10px] font-semibold text-neutral-400 tracking-wider uppercase mb-1">
           {t("dashboard.available")}
         </p>
-        <p className="text-4xl font-bold text-white tracking-tight font-mono mt-0.5">
+        <p className="text-4xl font-bold text-white tracking-tight font-mono">
           {formatCurrency(limit, currency)}
         </p>
+        <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/5">
+          <div>
+            <p className="text-[10px] text-neutral-400">Базовый лимит</p>
+            <p className="text-sm font-medium text-white">{formatCurrency(baseLimit, currency)}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] text-neutral-400">Потрачено сегодня</p>
+            <p className="text-sm font-medium text-white">{formatCurrency(spent, currency)}</p>
+          </div>
+        </div>
       </div>
 
       {/* Кнопка добавить */}
       <button
         type="button"
         onClick={() => setModalOpen(true)}
-        className="w-full h-13 bg-white text-black font-semibold text-base rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(255,255,255,0.12)] active:scale-[0.97] transition-all mt-5"
+        className="w-full h-13 bg-white text-black font-semibold text-base rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(255,255,255,0.12)] active:scale-[0.97] transition-all"
       >
         <Plus size={18} strokeWidth={1.5} />
         {t("dashboard.addExpense")}

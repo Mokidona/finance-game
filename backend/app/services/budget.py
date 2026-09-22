@@ -365,8 +365,6 @@ async def build_dashboard(session: AsyncSession, user: User, today: date) -> dic
     ).scalars().all()
 
     insights = await build_insights(session, user, today, spent_today, current_limit)
-    streak_days = await compute_streak(session, user, today)
-    coins = await compute_coins(session, user, today)
 
     return {
         "user_id": user.id,
@@ -378,9 +376,6 @@ async def build_dashboard(session: AsyncSession, user: User, today: date) -> dic
         "spent_today": float(spent_today),
         "progress_percentage": progress,
         "has_paid_access": bool(user.has_paid_access),
-        "streak_days": streak_days,
-        "coins": int(coins),
-        "active_skin_id": user.active_skin_id,
         "insights": insights,
         "today_transactions": [
             {

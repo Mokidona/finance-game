@@ -25,6 +25,8 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     telegram_id: Mapped[int | None] = mapped_column(BigInteger, unique=True, index=True, nullable=True)
+    email: Mapped[str | None] = mapped_column(String(200), unique=True, index=True, nullable=True)
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
     first_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
     currency: Mapped[str] = mapped_column(String(3), default="KZT", server_default="KZT")
     monthly_income: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=0)
@@ -35,7 +37,6 @@ class User(Base):
     # одноразовые и привязаны к telegram_id — колонка позволяет сверять платежи
     # Telegram при вебхуке и не активировать премиум «вслепую».
     premium_source: Mapped[str | None] = mapped_column(String(32), nullable=True)
-    active_skin_id: Mapped[str] = mapped_column(String(50), default="skin_cadet", server_default="skin_cadet")
     danger_threshold: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     saved_capital: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
@@ -50,9 +51,6 @@ class User(Base):
         back_populates="user", cascade="all, delete-orphan"
     )
     debts: Mapped[list["Debt"]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
-    )
-    coin_purchases: Mapped[list["CoinPurchase"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
 
@@ -121,43 +119,4 @@ class Debt(Base):
     user: Mapped["User"] = relationship(back_populates="debts")
 
 
-class CoinPurchase(Base):
-    """§35.3: покупка в магазине монет (кастомизация питомца за дисциплину).
 
-    Монеты сами по себе производные (см. `budget.compute_coins`) — здесь только
-    траты, поэтому баланс = заработано − куплено. Таблица НОВАЯ, её создаёт
-    `create_all` при старте уже поверх существующей базы (миграций в проекте нет,
-    а добавление колонки в `users` потребовало бы ALTER TABLE — таблицы же
-    создаются автоматически). Уникальный ключ (user_id, skin_id) не даёт купить
-    один скин дважды, даже если два запроса пришли одновременно.
-    """
-
-    __tablename__ = "coin_purchases"
-    __table_args__ = (UniqueConstraint("user_id", "skin_id", name="uq_coin_purchase_user_skin"),)
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    skin_id: Mapped[str] = mapped_column(String(50))
-    price: Mapped[Decimal] = mapped_column(Numeric(12, 2))
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
-
-    user: Mapped["User"] = relationship(back_populates="coin_purchases")
-
-
-class PendingTransaction(Base):
-    """Транзакция на паузе (Time Lock, секция 15.3.2).
-
-    Импульсная покупка выше «опасного порога» замораживается на час;
-    в расходы не попадает, пока пользователь не подтвердит после unlock_at.
-    Отмена зачисляет сумму в saved_capital.
-    """
-
-    __tablename__ = "pending_transactions"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    amount: Mapped[Decimal] = mapped_column(Numeric(12, 2))
-    category: Mapped[str] = mapped_column(String(50))
-    comment: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
-    unlock_at: Mapped[datetime] = mapped_column(DateTime, index=True)

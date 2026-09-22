@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .database import init_db
 from .routers import (
     analytics,
-    avatar,
+    auth,
     dashboard,
     fixed_expenses,
     profile,
@@ -36,8 +36,8 @@ app.include_router(dashboard.router, prefix="/api/v1")
 app.include_router(transactions.router, prefix="/api/v1")
 app.include_router(fixed_expenses.router, prefix="/api/v1")
 app.include_router(analytics.router, prefix="/api/v1")
+app.include_router(auth.router, prefix="/api/v1")
 app.include_router(profile.router, prefix="/api/v1")
-app.include_router(avatar.router, prefix="/api/v1")
 
 
 @app.get("/api/health")
