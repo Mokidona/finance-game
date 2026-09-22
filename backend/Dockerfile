@@ -7,8 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     # БД по умолчанию — на volume (/data), а не внутри слоя образа
     DB_PATH=/data/budget.db
 
-# tzdata: без него TZ из окружения не сдвигает границу дня, а от date.today()
-# зависят дневной лимит, стрик, монеты и нокаут питомца (services/budget.py).
+# tzdata: без него TZ из окружения не сдвигает границу дня (date.today()).
 RUN apt-get update \
     && apt-get install -y --no-install-recommends tzdata \
     && rm -rf /var/lib/apt/lists/*

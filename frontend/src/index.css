@@ -104,27 +104,13 @@ body::-webkit-scrollbar {
 }
 
 /* Секция 28: кроссфейд состояний спрайта-слизня (анимация кадров — CSS steps(N)) */
-@keyframes slime-fade-in {
-  from {
-    opacity: 0;
-  }
   to {
     opacity: 1;
   }
 }
-@keyframes slime-fade-out {
-  from {
-    opacity: 1;
-  }
   to {
     opacity: 0;
   }
-}
-.slime-fade-in {
-  animation: slime-fade-in 380ms ease-out both;
-}
-.slime-fade-out {
-  animation: slime-fade-out 380ms ease-out both;
 }
 
 /* Секция 15: скины */

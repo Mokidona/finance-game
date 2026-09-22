@@ -1,18 +1,13 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Lock, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { useApi } from "../context/AppContext.jsx";
-import { useHaptics } from "../hooks/useHaptics.js";
 import ExpenseCategoryPill from "../components/expenses/ExpenseCategoryPill.jsx";
 import { formatMoney } from "../utils/format.js";
 
-const SPRING = { type: "spring", stiffness: 400, damping: 28 };
-
-export default function AnalyticsPage({ openPaywall }) {
+export default function AnalyticsPage() {
   const { dashboard, analytics, refreshAnalytics } = useApi();
-  const { triggerHaptic } = useHaptics();
   const currency = dashboard?.currency ?? "KZT";
-  const hasPaidAccess = Boolean(dashboard?.has_paid_access);
 
   // Данные грузим всегда: замок показывает РЕАЛЬНЫЕ цифры пользователя под блюром
   useEffect(() => {
@@ -115,34 +110,5 @@ export default function AnalyticsPage({ openPaywall }) {
     </div>
   );
 
-  if (hasPaidAccess) return content;
-
-  // Frosted-пейволл: реальные данные пользователя под блюром + замок по центру
-  return (
-    <div className="relative mt-2">
-      <div aria-hidden className="pointer-events-none select-none blur-[6px] brightness-[0.45]">
-        {content}
-      </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6">
-        <div className="w-14 h-14 rounded-full bg-white/[0.03] backdrop-blur-2xl border border-t-[rgba(255,255,255,0.20)] border-x-[rgba(255,255,255,0.08)] border-b-[rgba(255,255,255,0.05)] flex items-center justify-center text-white/70">
-          <Lock size={22} strokeWidth={1.25} />
-        </div>
-        <p className="text-sm font-medium text-white text-center">
-          Это твои данные. Раскрой их.
-        </p>
-        <motion.button
-          type="button"
-          whileTap={{ scale: 0.96 }}
-          transition={SPRING}
-          onClick={() => {
-            triggerHaptic("heavy");
-            openPaywall?.();
-          }}
-          className="px-6 h-12 min-w-[44px] min-h-[44px] rounded-full bg-white/[0.92] text-black text-sm font-semibold flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(255,255,255,0.12)]"
-        >
-          Разблокировать за 990 KZT
-        </motion.button>
-      </div>
-    </div>
-  );
+  return content;
 }

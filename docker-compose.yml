@@ -1,20 +1,3 @@
-# Прод-запуск одной командой из корня репозитория:
-#
-#   cp .env.example .env    # вписать BOT_TOKEN и WEBHOOK_SECRET
-#   docker compose up -d --build
-#
-# Пользователи создаются сами при первом заходе из Telegram (initData-авторизация),
-# премиум продается за Telegram Stars (пейсменты подтверждает вебхук бота).
-#
-# Схема (проверена на сервере с работающим Traefik, сеть traefik-public):
-#   Traefik (entrypoint websecure + certresolver myresolver) → frontend (nginx:
-#   статика + прокси /api/* → backend:8000) → SQLite на named volume.
-# Бэкенд наружу не смотрит и порты на хост не публикует — только внутренняя сеть.
-# Webhook бота идет через тот же домен (POST /api/v1/paywall/webhook) — отдельный
-# роутер Traefik не нужен.
-#
-# Имена entrypoint/certresolver — как в рабочем compose соседнего проекта на этом
-# сервере; если отличаются — переопределяются через .env без правки этого файла.
 name: budget-mini-app
 
 services:
@@ -24,26 +7,12 @@ services:
     image: budget-mini-app-backend:latest
     restart: unless-stopped
     environment:
-      # БД на volume, иначе данные умрут вместе с контейнером
       DB_PATH: /data/budget.db
-      # Граница дня (date.today()) считается по этому поясу: лимит, стрик, монеты
       TZ: ${TZ:-Asia/Almaty}
-      # Авторизация Mini App + Telegram Stars. Все три переменные можно оставить
-      # пустыми — приложение работает, но API потребует Telegram-заголовок,
-      # а покупка премиума ответит ошибкой конфигурации.
-      BOT_TOKEN: ${BOT_TOKEN:-}
-      WEBHOOK_SECRET: ${WEBHOOK_SECRET:-}
-      # Домен для setWebhook (регистрируется при старте, если BOT_TOKEN задан)
-      PUBLIC_DOMAIN: https://${DOMAIN:-2mln.freeddns.org}
-      # Цена премиума в звездах
-      PREMIUM_STARS_PRICE: ${PREMIUM_STARS_PRICE:-50}
     volumes:
       - budget_data:/data
     networks:
       - internal
-    # Для отладки с хоста (только вручную, в проде не нужно):
-    # ports:
-    #   - "127.0.0.1:8000:8000"
 
   frontend:
     build:
@@ -57,37 +26,21 @@ services:
         condition: service_healthy
     networks:
       - internal
-      # Общая сеть с работающим Traefik (создана вне этого compose).
-      # Имя проверить на сервере: docker network ls | grep traefik
       - traefik-public
     labels:
       - "traefik.enable=true"
-      # Явно указываем сеть: иначе Traefik может выбрать internal и отдаст 502
       - "traefik.docker.network=traefik-public"
-      # Схема как у рабочего сервиса на сервере (zalpos): websecure + certresolver.
-      # Если на Traefik есть entrypoint `web`, можно добавить редирект:
-      #   - "traefik.http.routers.2mln.rule=Host(`${DOMAIN:-2mln.freeddns.org}`)"
-      #   - "traefik.http.routers.2mln.entrypoints=web"
-      #   - "traefik.http.routers.2mln.middlewares=2mln-redirect"
-      #   - "traefik.http.middlewares.2mln-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.2mln.rule=Host(`${DOMAIN:-2mln.freeddns.org}`)"
+      - "traefik.http.routers.2mln.rule=Host(`${DOMAIN:-localhost}`)"
       - "traefik.http.routers.2mln.entrypoints=websecure"
       - "traefik.http.routers.2mln.tls.certresolver=${CERTRESOLVER:-myresolver}"
       - "traefik.http.services.2mln.loadbalancer.server.port=80"
-    # Порты на хост не публикуем: весь трафик идёт через Traefik.
-    # Если нужен прямой доступ в обход Traefik — раскомментировать:
-    # ports:
-    #   - "${FRONTEND_PORT:-8080}:80"
 
 volumes:
-  # Данные SQLite (budget.db + WAL). Удалить вместе с историей: `docker compose down -v`
   budget_data:
 
 networks:
   internal:
     driver: bridge
-  # Сеть существующего Traefik. Если на сервере она называется иначе (например
-  # `traefik` или `proxy`) — переопределите в .env: TRAEFIK_NETWORK=имя
   traefik-public:
     external: true
     name: ${TRAEFIK_NETWORK:-traefik-public}
